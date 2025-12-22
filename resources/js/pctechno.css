@@ -1,0 +1,60 @@
+:root{
+  --pc-blue:#163b8f;
+  --pc-blue-2:#1d4ed8;
+  --pc-yellow:#f6c400;
+  --pc-white:#ffffff;
+  --pc-bg:#f6f8fc;
+}
+
+body{ background: var(--pc-bg); }
+
+.pc-sidebar{
+  background: var(--pc-blue);
+  min-height: 100vh;
+  color: #fff;
+}
+
+.pc-brand{
+  display:flex; align-items:center; gap:.6rem;
+  padding: 1rem 1.1rem;
+  font-weight: 700;
+}
+
+.pc-badge{
+  width:32px; height:32px; border-radius:8px;
+  background: var(--pc-yellow);
+  color:#111; font-weight:800;
+  display:flex; align-items:center; justify-content:center;
+}
+
+.pc-link{
+  display:flex; align-items:center; gap:.6rem;
+  padding:.75rem 1.1rem;
+  color: rgba(255,255,255,.9);
+  text-decoration:none;
+  border-radius: 10px;
+  margin: .2rem .6rem;
+}
+
+.pc-link:hover{ background: rgba(255,255,255,.10); color:#fff; }
+.pc-link.active{ background: var(--pc-yellow); color:#111; font-weight:700; }
+
+.pc-card-icon{
+  width:44px; height:44px; border-radius:12px;
+  display:flex; align-items:center; justify-content:center;
+  color:#fff; font-weight:800;
+}
+
+.pc-btn-primary{
+  background: var(--pc-blue-2);
+  border-color: var(--pc-blue-2);
+  color:#fff;
+}
+.pc-btn-primary:hover{ filter: brightness(.95); }
+
+.pc-btn-yellow{
+  background: #ffe48a;
+  border-color: #ffe48a;
+  color:#111;
+  font-weight:700;
+}
