@@ -12,39 +12,40 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
 
-class RegisteredUserController extends Controller
-{
+class RegisteredUserController extends Controller {
     /**
-     * Display the registration view.
-     */
-    public function create(): View
-    {
-        return view('auth.register');
+    * Display the registration view.
+    */
+
+    public function create(): View {
+        return view( 'auth.register' );
     }
 
     /**
-     * Handle an incoming registration request.
-     *
-     * @throws \Illuminate\Validation\ValidationException
-     */
-    public function store(Request $request): RedirectResponse
-    {
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-        ]);
+    * Handle an incoming registration request.
+    *
+    * @throws \Illuminate\Validation\ValidationException
+    */
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
+    public function store( Request $request ): RedirectResponse {
+        $request->validate( [
+            'full_name' => [ 'required', 'string', 'max:255' ],
+            'username'  => [ 'required', 'string', 'max:50', 'alpha_dash', 'unique:users,username' ],
+            'email'     => [ 'required', 'string', 'lowercase', 'email', 'max:255', 'unique:users,email' ],
+            'password'  => [ 'required', 'confirmed', Rules\Password::defaults() ],
+        ] );
 
-        event(new Registered($user));
+        $user = User::create( [
+            'full_name' => $request->input( 'full_name' ),
+            'username'  => $request->input( 'username' ),
+            'email'     => $request->input( 'email' ),
+            'role'      => 'customer', // default role
+            'password'  => Hash::make( $request->input( 'password' ) ),
+        ] );
 
-        Auth::login($user);
+        event( new Registered( $user ) );
+        Auth::login( $user );
 
-        return redirect(route('dashboard', absolute: false));
+        return redirect( route( 'dashboard', absolute: false ) );
     }
 }
