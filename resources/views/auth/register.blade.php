@@ -17,7 +17,7 @@
             </h1>
           </div>
 
-          <div class="auth-sub">InvenTrack</div>
+          <div class="auth-sub">PCTechno</div>
           <div class="auth-divider"></div>
         </div>
       </div>
