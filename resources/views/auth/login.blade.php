@@ -13,7 +13,7 @@
         <div class="auth-brand">
           <div class="auth-topline">
             <h1 class="auth-title mb-0">
-              <span class="auth-title-gradient">InvenTrack</span>
+              <span class="auth-title-gradient">PCTechno</span>
             </h1>
           </div>
 

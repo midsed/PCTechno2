@@ -1,89 +1,118 @@
 @extends('layouts.pc')
 
 @section('content')
-  <div class="page-title">Dashboard Overview</div>
+  <div class="pc-pagehead mb-3">
+    <div>
+      <div class="pc-kicker">Overview</div>
+      <div class="pc-pagetitle">Dashboard</div>
+      <div class="pc-pagesub">Quick summary of revenue, transactions, stock, and customers.</div>
+    </div>
 
+    <div class="pc-pageactions">
+      <span class="pc-pill">
+        <span class="pc-pill-dot"></span>
+        Live Data
+      </span>
+    </div>
+  </div>
+
+  <!-- Stat Cards -->
   <div class="row g-3 mb-3">
     <div class="col-12 col-md-6 col-lg-3">
-      <div class="card border-0 shadow-sm">
-        <div class="card-body d-flex align-items-center gap-3">
-          <div class="pc-card-icon" style="background:#22c55e;">$</div>
-          <div>
-            <div class="small muted">Total Revenue</div>
-            <div class="h4 mb-0 fw-bold">${{ number_format($totalRevenue, 2) }}</div>
+      <div class="pc-stat pc-pop">
+        <div class="pc-stat-top">
+          <div class="pc-stat-icon pc-grad-green">$</div>
+          <div class="pc-stat-meta">
+            <div class="pc-stat-label">Total Revenue</div>
+            <div class="pc-stat-value">${{ number_format($totalRevenue, 2) }}</div>
           </div>
         </div>
+        <div class="pc-stat-foot">Updated from latest sales records</div>
       </div>
     </div>
 
     <div class="col-12 col-md-6 col-lg-3">
-      <div class="card border-0 shadow-sm">
-        <div class="card-body d-flex align-items-center gap-3">
-          <div class="pc-card-icon" style="background:#3b82f6;">🛒</div>
-          <div>
-            <div class="small muted">Total Transactions</div>
-            <div class="h4 mb-0 fw-bold">{{ $totalTransactions }}</div>
+      <div class="pc-stat pc-pop" style="animation-delay:.05s;">
+        <div class="pc-stat-top">
+          <div class="pc-stat-icon pc-grad-blue">🛒</div>
+          <div class="pc-stat-meta">
+            <div class="pc-stat-label">Total Transactions</div>
+            <div class="pc-stat-value">{{ $totalTransactions }}</div>
           </div>
         </div>
+        <div class="pc-stat-foot">Completed transactions count</div>
       </div>
     </div>
 
     <div class="col-12 col-md-6 col-lg-3">
-      <div class="card border-0 shadow-sm">
-        <div class="card-body d-flex align-items-center gap-3">
-          <div class="pc-card-icon" style="background:#eab308;">📦</div>
-          <div>
-            <div class="small muted">Products in Stock</div>
-            <div class="h4 mb-0 fw-bold">{{ $productsInStock }}</div>
+      <div class="pc-stat pc-pop" style="animation-delay:.10s;">
+        <div class="pc-stat-top">
+          <div class="pc-stat-icon pc-grad-yellow">📦</div>
+          <div class="pc-stat-meta">
+            <div class="pc-stat-label">Products in Stock</div>
+            <div class="pc-stat-value">{{ $productsInStock }}</div>
           </div>
         </div>
+        <div class="pc-stat-foot">Available inventory quantity</div>
       </div>
     </div>
 
     <div class="col-12 col-md-6 col-lg-3">
-      <div class="card border-0 shadow-sm">
-        <div class="card-body d-flex align-items-center gap-3">
-          <div class="pc-card-icon" style="background:#a855f7;">👥</div>
-          <div>
-            <div class="small muted">Customers</div>
-            <div class="h4 mb-0 fw-bold">{{ $customersCount }}</div>
+      <div class="pc-stat pc-pop" style="animation-delay:.15s;">
+        <div class="pc-stat-top">
+          <div class="pc-stat-icon pc-grad-purple">👥</div>
+          <div class="pc-stat-meta">
+            <div class="pc-stat-label">Customers</div>
+            <div class="pc-stat-value">{{ $customersCount }}</div>
           </div>
         </div>
+        <div class="pc-stat-foot">Registered customer accounts</div>
       </div>
     </div>
   </div>
 
   <div class="row g-3">
     <div class="col-12 col-lg-8">
-      <div class="card border-0 shadow-sm">
-        <div class="card-body">
-          <div class="d-flex align-items-center gap-2 mb-3">
-            <span class="fw-bold">📈 Sales Trend</span>
+      <div class="pc-panel pc-pop" style="animation-delay:.18s;">
+        <div class="pc-panel-head">
+          <div>
+            <div class="pc-panel-title">Sales Trend</div>
+            <div class="pc-panel-sub">Daily sales total based on recorded transactions</div>
           </div>
-          <canvas id="salesTrend" height="110"></canvas>
+        </div>
+
+        <div class="pc-chart-wrap">
+          <canvas id="salesTrend" height="120"></canvas>
         </div>
       </div>
     </div>
 
     <div class="col-12 col-lg-4">
-      <div class="card border-0 shadow-sm">
-        <div class="card-body">
-          <div class="d-flex align-items-center justify-content-between mb-2">
-            <div class="fw-bold text-danger">Low Stock Alert</div>
+      <div class="pc-panel pc-pop" style="animation-delay:.22s;">
+        <div class="pc-panel-head">
+          <div>
+            <div class="pc-panel-title text-danger">Low Stock Alerts</div>
+            <div class="pc-panel-sub">Items that need restocking soon</div>
           </div>
+          <span class="pc-badge-soft pc-badge-danger"></span>
+        </div>
 
+        <div class="pc-alert-list">
           @if($lowStock->count() === 0)
-            <div class="alert alert-success mb-0">No low stock items.</div>
+            <div class="pc-empty">
+              <div class="pc-empty-title">All good</div>
+              <div class="pc-empty-sub">No low stock items right now.</div>
+            </div>
           @else
             @foreach($lowStock as $p)
-              <div class="p-3 rounded-3 mb-2" style="background:#fff1f2;border:1px solid #fecdd3;">
-                <div class="d-flex align-items-start justify-content-between">
-                  <div>
-                    <div class="fw-bold">{{ $p->product_name }}</div>
-                    <div class="small text-danger">Only {{ $p->quantity_available }} left</div>
-                  </div>
-                  <a href="{{ route('products.edit', $p->product_id) }}" class="btn btn-sm btn-outline-danger">Restock</a>
+              <div class="pc-alert-item">
+                <div class="pc-alert-left">
+                  <div class="pc-alert-name">{{ $p->product_name }}</div>
+                  <div class="pc-alert-sub">Only <b>{{ $p->quantity_available }}</b> left</div>
                 </div>
+                <a href="{{ route('products.edit', $p->product_id) }}" class="btn btn-sm btn-outline-danger pc-btn-soft">
+                  Restock
+                </a>
               </div>
             @endforeach
           @endif
@@ -92,13 +121,13 @@
     </div>
   </div>
 
-  <!-- Chart.js CDN -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
     const trendLabels = @json($trend->pluck('d'));
     const trendTotals = @json($trend->pluck('total'));
 
     const ctx = document.getElementById('salesTrend');
+
     new Chart(ctx, {
       type: 'bar',
       data: {
@@ -106,13 +135,17 @@
         datasets: [{
           label: 'Sales',
           data: trendTotals,
-          borderWidth: 1
+          borderWidth: 1,
+          borderRadius: 10
         }]
       },
       options: {
         responsive: true,
         plugins: { legend: { display: false } },
-        scales: { y: { beginAtZero: true } }
+        scales: {
+          x: { grid: { display: false } },
+          y: { beginAtZero: true }
+        }
       }
     });
   </script>
