@@ -7,22 +7,48 @@ use App\Http\Controllers\{
 };
 
 Route::get('/', fn() => redirect()->route('login'));
-
 require __DIR__.'/auth.php';
 
 Route::middleware(['auth'])->group(function () {
 
-  // Dashboard: Admin + Employee (Cashier can also see it if you want; optional)
   Route::get('/dashboard', [DashboardController::class, 'index'])
     ->name('dashboard')
     ->middleware('role:admin,employee,cashier');
 
-  // Inventory + Customers: Admin + Employee
-  Route::resource('products', ProductController::class)->middleware('role:admin,employee');
-  Route::resource('customers', CustomerController::class)->middleware('role:admin,employee');
+  /**
+   * PRODUCTS (Inventory)
+   * - DELETE from Active = soft delete (Archive)
+   * - Archived tab = onlyTrashed()
+   * - Restore action = restore()
+   * - Permanent delete = forceDelete() (only if not referenced by transactions)
+   */
+  Route::resource('products', ProductController::class)
+    ->middleware('role:admin,employee');
 
-  // Transactions:
-  // Cashier can ADD and VIEW Transactions table
+  Route::patch('/products/{product}/restore', [ProductController::class, 'restore'])
+    ->name('products.restore')
+    ->middleware('role:admin,employee');
+
+  Route::delete('/products/{product}/force', [ProductController::class, 'forceDelete'])
+    ->name('products.forceDelete')
+    ->middleware('role:admin,employee');
+
+  /**
+   * CUSTOMERS
+   * - Same behavior as products
+   */
+  Route::resource('customers', CustomerController::class)
+    ->middleware('role:admin,employee');
+
+  Route::patch('/customers/{customer}/restore', [CustomerController::class, 'restore'])
+    ->name('customers.restore')
+    ->middleware('role:admin,employee');
+
+  Route::delete('/customers/{customer}/force', [CustomerController::class, 'forceDelete'])
+    ->name('customers.forceDelete')
+    ->middleware('role:admin,employee');
+
+  // Transactions (Cashier can view + create)
   Route::get('/transactions', [TransactionController::class, 'index'])
     ->name('transactions.index')
     ->middleware('role:admin,employee,cashier');
@@ -35,13 +61,14 @@ Route::middleware(['auth'])->group(function () {
     ->name('transactions.store')
     ->middleware('role:admin,employee,cashier');
 
-  // Sales: Cashier can VIEW sales, Admin/Employee too
+  // Sales History
   Route::get('/sales', [SalesController::class, 'index'])
     ->name('sales.index')
     ->middleware('role:admin,employee,cashier');
 
-  // Users + Logs: Admin only
+  // Users + Logs (Admin only)
   Route::resource('users', UserController::class)->middleware('role:admin');
-  Route::get('/logs', [LogController::class, 'index'])->name('logs.index')->middleware('role:admin');
-
+  Route::get('/logs', [LogController::class, 'index'])
+    ->name('logs.index')
+    ->middleware('role:admin');
 });

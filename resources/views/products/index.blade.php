@@ -20,7 +20,7 @@
 
       <form class="mb-3" method="GET" action="{{ route('products.index') }}">
         <input type="hidden" name="tab" value="{{ $tab }}">
-        <input class="form-control" name="q" value="{{ $q }}" placeholder="Search active products...">
+        <input class="form-control" name="q" value="{{ $q }}" placeholder="Search products...">
       </form>
 
       <div class="table-responsive">
@@ -31,7 +31,7 @@
               <th>DESCRIPTION</th>
               <th class="text-end" style="width:12%;">PRICE</th>
               <th class="text-center" style="width:10%;">STOCK</th>
-              <th class="text-end" style="width:12%;">ACTIONS</th>
+              <th class="text-end" style="width:14%;">ACTIONS</th>
             </tr>
           </thead>
           <tbody>
@@ -46,14 +46,32 @@
                   @endphp
                   <span class="badge rounded-pill {{ $badge }}">{{ $p->quantity_available }}</span>
                 </td>
+
                 <td class="text-end">
-                  <a class="btn btn-sm btn-outline-primary" href="{{ route('products.edit', $p->product_id) }}">✏️</a>
-                  <form method="POST" action="{{ route('products.destroy', $p->product_id) }}" class="d-inline"
-                        onsubmit="return confirm('Delete this product?');">
-                    @csrf
-                    @method('DELETE')
-                    <button class="btn btn-sm btn-outline-danger" type="submit">🗑️</button>
-                  </form>
+                  @if($tab === 'active')
+                    <a class="btn btn-sm btn-outline-primary" href="{{ route('products.edit', $p->product_id) }}">✏️</a>
+
+                    <form method="POST" action="{{ route('products.destroy', $p->product_id) }}" class="d-inline"
+                          onsubmit="return confirm('Archive this product?');">
+                      @csrf
+                      @method('DELETE')
+                      <button class="btn btn-sm btn-outline-danger" type="submit">🗄️</button>
+                    </form>
+                  @else
+                    <form method="POST" action="{{ route('products.restore', $p->product_id) }}" class="d-inline"
+                          onsubmit="return confirm('Restore this product to Active?');">
+                      @csrf
+                      @method('PATCH')
+                      <button class="btn btn-sm btn-outline-success" type="submit">↩️</button>
+                    </form>
+
+                    <form method="POST" action="{{ route('products.forceDelete', $p->product_id) }}" class="d-inline"
+                          onsubmit="return confirm('Permanently delete this product? This cannot be undone.');">
+                      @csrf
+                      @method('DELETE')
+                      <button class="btn btn-sm btn-outline-danger" type="submit">🗑️</button>
+                    </form>
+                  @endif
                 </td>
               </tr>
             @empty
