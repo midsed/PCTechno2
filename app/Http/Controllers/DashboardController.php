@@ -12,13 +12,24 @@ class DashboardController extends Controller
 {
   public function index()
   {
+    $LOW_STOCK_THRESHOLD = 5;
+
     $totalRevenue = Sale::sum('total_amount');
     $totalTransactions = Txn::count();
-    $productsInStock = Product::where('is_archived', false)->sum('quantity_available');
-    $customersCount = Customer::where('is_archived', false)->count();
 
-    $lowStock = Product::where('is_archived', false)
-      ->where('quantity_available', '<=', 5)
+    // ACTIVE ONLY (not archived/soft-deleted)
+    $productsInStock = Product::query()
+      ->whereNull('deleted_at')
+      ->sum('quantity_available');
+
+    $customersCount = Customer::query()
+      ->whereNull('deleted_at')
+      ->count();
+
+    // Low stock ACTIVE ONLY
+    $lowStock = Product::query()
+      ->whereNull('deleted_at')
+      ->where('quantity_available', '<=', $LOW_STOCK_THRESHOLD)
       ->orderBy('quantity_available')
       ->get();
 
@@ -33,7 +44,12 @@ class DashboardController extends Controller
       ->get();
 
     return view('dashboard.index', compact(
-      'totalRevenue','totalTransactions','productsInStock','customersCount','lowStock','trend'
+      'totalRevenue',
+      'totalTransactions',
+      'productsInStock',
+      'customersCount',
+      'lowStock',
+      'trend'
     ));
   }
 }
